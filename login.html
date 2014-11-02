@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C
+//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>登录</title>
+<style>
+	*{ margin:0; padding:0; font-size:12px;}	
+	#form1{width:500px;margin:20px auto;}
+	#user_list{ width:200px;height:25px; font-size:14px;}
+	#password{height:25px;line-height:25px;font-size:14px; padding-left:10px;}
+	#login{ border:1px solid #ccc;margin-left:10px; cursor:pointer;}
+</style>
+<script type="text/javascript" src="ajax.js"></script>
+<script type="text/javascript">
+window.onload=function ()
+{
+	
+	var oSlect=document.getElementById('user_list');
+	var oPsw=document.getElementById('password');
+	var i=0;	
+	ajax({
+		method : 'get',
+		url : 'user_list.json',
+		success : function (text) {
+			//var aData=eval(text);
+			var aData=JSON.parse(text);
+			for(i=0;i<aData.length;i++)
+			{
+				var oOpt=document.createElement('option'); 				
+				oOpt.innerHTML=oOpt.value=aData[i].username;				
+				oSlect.appendChild(oOpt);			
+			}
+		},
+		async : true
+	});		
+	oPsw.onblur=function()
+	{
+		var oSelIndex =oSlect.selectedIndex;			
+		var oTxt=oSlect.options[oSelIndex].text;
+		var oVal=oPsw.value;
+		ajax({
+			method : 'post',
+			url : 'login.php',				
+			data: {
+					'username':oTxt,
+					'password':oVal,
+				},
+			success : function (text) {
+				//var result=eval(text);
+				var result=JSON.parse(text);
+					if(result.status=="1")
+					{							
+						alert(result.info);
+					
+					}					
+					else
+					{
+						alert(result.info);
+					}													
+			},
+			async : true
+		});
+	};			
+};
+</script>
+</head>
+<body style="overflow:auto">	
+		<form id="form1" action="" method="post">
+			用户名:<select id="user_list" name="username" >			
+				   </select>
+			密码:  <input type="password" id="password" name="password" value="" />
+			       <input type="button" id="login"  name="login" value="登录" />
+		</form>
+</body>
+</html>
